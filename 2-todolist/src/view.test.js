@@ -1,17 +1,27 @@
-import { render } from './view';
+import { render } from './view.js';
 
-test('renders view', () => {
+test('render', () => {
     const state = {
-        inputValue: '할일 1',
-        todos: ['할일 2'],
+        todos: [
+            { 
+                id: 1,
+                title: '할일 1',
+                completed: false,
+            },
+            { 
+                id: 2,
+                title: '할일 1',
+                completed: false,
+            },
+        ],
     };
 
     const html = render(state);
 
-    expect(html).toMatch('<ul>');
-    expect(html).toMatch('<li>');
+    expect(html).toMatch('<h1>');
     expect(html).toMatch('<form');
     expect(html).toMatch('<input');
-    expect(html).toMatch('할일 1');
-    expect(html).toMatch('할일 2');
+    expect(html).toMatch('<button');
+    expect(html).toMatch('<ul');
+    expect(html).toMatch('<li');
 });

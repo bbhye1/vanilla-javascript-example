@@ -1,33 +1,55 @@
-import { setState, getState } from './services';
+import { 
+    getTodos, addTodo, deleteTodo,
+    checkTodo, fetchTodos 
+} from './services.js';
 
-describe('sevices', () => {
-    it('changeInput', () => {
-        expect(getState('inputValue')).toBe('');
-        
-        const inputValue = '할일 1';
-        
-        setState('changeInput', inputValue );
-        
-        expect(getState('inputValue')).toBe(inputValue);
-    });
+import { getTasks } from './apis/tasks.js';
+
+jest.mock('./apis/tasks.js');
+
+test('addTodos', () => {
+    addTodo('새로운 할 일');
+
+    const todos = getTodos();
+
+    expect(todos[todos.length - 1].title).toBe('새로운 할 일');
+});
+
+test('deleteTodo', () => {
+    const id = 1;
+
+    deleteTodo(id);
+
+    const todos = getTodos();
+
+    expect(todos.length).toBe(0);
+});
+
+test('checkTodo', () => {
+    addTodo('새로운 할 일');
     
-    it('focusIn', () => {
-        expect(getState('inputFocus')).toBeFalsy();
-        
-        setState('focusIn');
-        
-        expect(getState('inputFocus')).toBeTruthy();
-    });
-    
-    it('addTodo', () => {
-        setState('addTodo', '할일 1');
-        
-        expect(getState('todos')).toContain('할일 1');
-    });
-    
-    it('deleteTodo', () => {
-        setState('deleteTodo', 0);
-        
-        expect(getState('todos').length).toBe(0);
-    });
+    const id = 2;
+
+    checkTodo(id);
+
+    const todos = getTodos();
+
+    expect(todos[0].completed).toBeTruthy();
+
+    checkTodo(id);
+
+    expect(todos[0].completed).toBeFalsy();
+});
+
+test('fetchTodos', async() => {
+
+    getTasks.mockImplementation(async() => [
+        { id: 1, title: '할일 1', completed: false }
+    ]);
+
+    await fetchTodos();
+
+    expect(getTodos()).toEqual([
+        { id: 1, title: '할일 1', completed: false }
+    ]);
 });

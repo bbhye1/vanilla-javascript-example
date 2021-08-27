@@ -1,26 +1,33 @@
-import { bindEvents } from './listener';
+import { bindEvents } from './listener.js';
+
+const events = {};
+
+const bind = (id, eventType) => {
+    events[`${id}.${eventType}`] = true;
+}
+
+const update = () => {};
 
 test('bind', () => {
-    const events = {};
-
-    const bind = (id, eventType, callback) => {
-      events[`${id}.${eventType}`] = callback;
-    };
-  
-    const update = () => {};
-  
     const state = {
-        inputValue: '',
-        inputFocus: false,
-        todos: ['할일 1', '할일 2'],
+        todos: [{
+            id: 1,
+            title: '할일 1',
+            completed: false,
+        },
+        {
+            id: 2,
+            title: '할일 2',
+            completed: false,
+        },
+    ],
     };
-  
-    bindEvents(state, { bind, update });
-    
-    expect(events['todo-input.input']).toBeTruthy();
-  
-    expect(events['todo-form.submit']).toBeTruthy();
 
-    expect(events['todo-delete-0.click']).toBeTruthy();
-    expect(events['todo-delete-1.click']).toBeTruthy();
-  });
+    bindEvents(state, { bind, update });
+
+    expect(events['todo-form.submit']).toBeTruthy();
+    expect(events['delete-button-1.click']).toBeTruthy();
+    expect(events['delete-button-2.click']).toBeTruthy();
+    expect(events['checkbox-1.click']).toBeTruthy();
+    expect(events['checkbox-2.click']).toBeTruthy();
+});

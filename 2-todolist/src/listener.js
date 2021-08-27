@@ -1,34 +1,41 @@
-import { setState } from './services.js';
+import { addTodo, deleteTodo, checkTodo } from './services.js';
 
-export const bindEvents = (state, methods) => {
-    bindChangeInput(state, methods);
-    bindAddTodo(state, methods);
-    bindDeleteTodo(state, methods);
+function getValue(id) {
+    const el = document.getElementById(id);
+
+    return el.value;
 }
 
-const bindChangeInput = (_, { bind, update }) => {
-    bind('todo-input', 'input', (e) => {
-        setState('changeInput', e.target.value);
-        setState('focusIn');
-        update();
-    });
-};
 
-const bindAddTodo = (state, {bind, update}) => {
+export function bindEvents(state,  methods ) {
+    bindAddTodo(methods);
+    bindDeleteTodo(state, methods);
+    bindCheckTodo(state, methods);
+}
+
+function bindAddTodo({ bind, update }) {
     bind('todo-form', 'submit', (e) => {
         e.preventDefault();
 
-        setState('changeInput', '');
-        setState('addTodo', state.inputValue);
+        addTodo(getValue('todo-input'));
         update();
     });
-};
+}
 
-const bindDeleteTodo = (state, {bind, update}) => {
-    [...new Array(state.todos.length)].forEach((_, i) => {
-        bind(`todo-delete-${i}`, 'click', (e) => {
-            setState('deleteTodo', i);
+function bindDeleteTodo(state, { bind, update }) {
+    state.todos.forEach(({ id }) => {
+        bind(`delete-button-${id}`, 'click', (e) => {
+            deleteTodo(id);
             update();
         });
     });
-};
+}
+
+function bindCheckTodo(state, { bind, update }) {
+    state.todos.forEach(({ id }) => {
+        bind(`checkbox-${id}`, 'click', (e) => {
+            checkTodo(id);
+            update();
+        });
+    });
+}
